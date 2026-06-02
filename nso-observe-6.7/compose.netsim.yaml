@@ -1,0 +1,53 @@
+services:
+  netsim:
+    restart: unless-stopped
+    depends_on:
+      nso-package-init:
+        condition: service_completed_successfully
+    image: nso-custom-prod:${NSO_VERSION}
+    user: root
+    entrypoint: bash
+    command: /netsim-start.sh
+    volumes:
+      - type: volume
+        source: nso-packages
+        target: /nso/run/packages
+        read_only: true
+      - type: volume
+        source: netsim-vol
+        target: /netsim-output
+      - type: bind
+        source: ./netsim/netsim-start.sh
+        target: /netsim-start.sh
+    environment:
+      NETSIM_DEVICES_PER_NED: ${NETSIM_DEVICES_PER_NED}
+    healthcheck:
+      test: sh -lc 'ncs-netsim --dir /netsim is-alive >/dev/null 2>&1 && test -f /netsim-output/.netsim-ready'
+      interval: 5s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    ports:
+      - "10022-10150:10022-10150"
+      - "12022-12150:12022-12150"
+    networks:
+      - nso-net
+
+  nso:
+    depends_on:
+      netsim:
+        condition: service_healthy
+    volumes:
+      - type: volume
+        source: netsim-vol
+        target: /netsim-output
+        read_only: true
+      - type: bind
+        source: ./netsim/post-ncs-start/01-load-netsim-devices.sh
+        target: /etc/ncs/post-ncs-start.d/01-load-netsim-devices.sh
+      - type: bind
+        source: ./init/authgroups.xml
+        target: /netsim-config/authgroups.xml
+
+volumes:
+  netsim-vol:

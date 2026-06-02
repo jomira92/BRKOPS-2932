@@ -1,0 +1,13 @@
+<ncs-package xmlns="http://tail-f.com/ns/ncs-packages">
+  <name>ntp-min-service</name>
+  <package-version>0.2.0</package-version>
+  <description>Minimal NTP service for IOS and IOS-XR devices</description>
+  <ncs-min-version>6.1</ncs-min-version>
+
+  <component>
+    <name>main</name>
+    <application>
+      <python-class-name>ntp_min_service.main.Main</python-class-name>
+    </application>
+  </component>
+</ncs-package>

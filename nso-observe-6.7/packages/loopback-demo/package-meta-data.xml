@@ -1,0 +1,13 @@
+<ncs-package xmlns="http://tail-f.com/ns/ncs-packages">
+  <name>loopback-demo</name>
+  <package-version>0.1.0</package-version>
+  <description>Loopback demo service with optional create delay for observability demos</description>
+  <ncs-min-version>6.1</ncs-min-version>
+
+  <component>
+    <name>main</name>
+    <application>
+      <python-class-name>loopback_demo.main.Main</python-class-name>
+    </application>
+  </component>
+</ncs-package>

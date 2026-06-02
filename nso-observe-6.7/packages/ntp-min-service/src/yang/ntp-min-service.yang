@@ -1,0 +1,51 @@
+module ntp-min-service {
+  namespace "http://example.com/ntp-min-service";
+  prefix ntpms;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+  import tailf-ncs {
+    prefix ncs;
+  }
+
+  description
+    "Minimal service to push an NTP server to IOS and IOS-XR devices.";
+
+  revision 2026-05-30 {
+    description
+      "Initial revision.";
+  }
+
+  list ntp-min-service {
+    key name;
+    description
+      "Service instance for NTP server rollout.";
+
+    uses ncs:service-data;
+    ncs:servicepoint ntp-min-servicepoint;
+
+    leaf name {
+      type string;
+    }
+
+    leaf-list device {
+      type leafref {
+        path "/ncs:devices/ncs:device/ncs:name";
+      }
+      min-elements 1;
+      description
+        "Target IOS/IOS-XR device names.";
+    }
+
+    leaf ntp-server {
+      type inet:host;
+      mandatory true;
+      description
+        "NTP server hostname or IP.";
+    }
+  }
+}

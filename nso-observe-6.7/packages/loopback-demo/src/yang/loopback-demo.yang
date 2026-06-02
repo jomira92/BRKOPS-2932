@@ -1,0 +1,68 @@
+module loopback-demo {
+  namespace "http://example.com/loopback-demo";
+  prefix lbd;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import tailf-ncs {
+    prefix ncs;
+  }
+
+  description
+    "Loopback service for demo traffic with configurable create delay.";
+
+  revision 2026-05-31 {
+    description
+      "Initial revision.";
+  }
+
+  augment "/ncs:services" {
+    list loopback-demo {
+      key name;
+      description
+        "Creates a loopback interface on a target IOS/IOS-XR device.";
+
+      uses ncs:service-data;
+      ncs:servicepoint loopback-demo;
+
+      leaf name {
+        type string;
+      }
+
+      leaf device {
+        type leafref {
+          path "/ncs:devices/ncs:device/ncs:name";
+        }
+        mandatory true;
+        description
+          "Target device name.";
+      }
+
+      leaf loopback-number {
+        type uint16 {
+          range "0..65535";
+        }
+        mandatory true;
+        description
+          "Loopback interface number.";
+      }
+
+      leaf ip-address {
+        type inet:ipv4-address;
+        mandatory true;
+        description
+          "Loopback IPv4 /32 address.";
+      }
+
+      leaf sleep-seconds {
+        type uint16 {
+          range "0..120";
+        }
+        default 0;
+        description
+          "Optional artificial delay in the create callback for observability demos.";
+      }
+    }
+  }
+}
